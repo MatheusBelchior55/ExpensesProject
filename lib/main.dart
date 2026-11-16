@@ -5,7 +5,7 @@ import 'components/transaction_list.dart';
 import 'models/transaction.dart';
 import 'components/chart.dart';
 
-main() => runApp(ExpensesApp());
+void main() => runApp(ExpensesApp());
 
 class ExpensesApp extends StatelessWidget {
   ExpensesApp({super.key});
@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  _addTransaction(String title, double value, DateTime date) {
+  void _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
       id: Random().nextDouble().toString(),
       title: title,
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pop();
   }
 
-  _removeTransaction(String id) {
+  void _removeTransaction(String id) {
     setState(() {
       _transactions.removeWhere((tr) {
         return tr.id == id;
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  _openTransactionFormModal(BuildContext context) {
+  void _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -92,24 +92,36 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Despesas Pessoais'),
+
+    final appBar = AppBar(
+        title: Text('Despesas Pessoais'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => _openTransactionFormModal(context),
           ),
         ],
-      ),
+      );
+
+    final availableHeight = MediaQuery.of(context).size.height 
+    - appBar.preferredSize.height 
+    - MediaQuery.of(context).padding.top;
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(_transactions, _removeTransaction),
+            Container(
+              height: availableHeight * 0.25,
+              child: Chart(_recentTransactions),),
+            Container(
+              height: availableHeight * 0.75,
+              child: TransactionList(_transactions, _removeTransaction)),
           ],
         ),
       ),
